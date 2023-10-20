@@ -1,1 +1,24 @@
+name: Security Scan
 
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install GitLeaks
+        run: |
+          curl -sSf https://raw.githubusercontent.com/zricethezav/gitleaks/master/install.sh | sh -s
+          
+      - name: Run GitLeaks Scan
+        run: gitleaks -v --repo-path $GITHUB_WORKSPACE
