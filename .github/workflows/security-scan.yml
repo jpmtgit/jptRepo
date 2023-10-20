@@ -1,24 +1,28 @@
-name: Security Scan
-
+name: GitLeaks Scan
+# testing sample DevOps with Git workflow
 on:
   push:
     branches:
-      - main
+      - main  # Modify this to match your repository's main branch
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]    
 
 jobs:
-  security-scan:
+  gitleaks:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install GitLeaks
-        run: |
-          curl -sSf https://raw.githubusercontent.com/zricethezav/gitleaks/master/install.sh | sh -s
-          
-      - name: Run GitLeaks Scan
-        run: gitleaks -v --repo-path $GITHUB_WORKSPACE
+    - name: Install GitLeaks
+      run: |
+        wget -q -O gitleaks.tar.gz https://github.com/gitleaks/gitleaks/releases/download/v8.18.0/gitleaks_8.18.0_linux_x64.tar.gz
+        ls -l
+        tar -xzvf gitleaks.tar.gz
+        chmod +x gitleaks
+        sudo mv gitleaks /usr/local/bin/
+
+    - name: Run GitLeaks
+      run: |
+        gitleaks detect --redact
